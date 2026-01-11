@@ -1,0 +1,377 @@
+TURTLE TIMER ROUTINES
+________________________
+
+
+Here’s a reusable module you can drop into your project to manage timers in any turtle game.
+
+import turtle
+
+class TurtleTimer:
+    def __init__(self, duration, update_interval=1000, on_timeout=None):
+        """
+        A simple timer for turtle-based games.
+
+        Args:
+            duration (int): total time in seconds
+            update_interval (int): update interval in ms (default 1000 ms = 1 second)
+            on_timeout (function): function to call when timer reaches 0
+        """
+        self.duration = duration
+        self.remaining = duration
+        self.update_interval = update_interval
+        self.on_timeout = on_timeout
+
+        # Create a hidden turtle for displaying time
+        self.display = turtle.Turtle()
+        self.display.hideturtle()
+        self.display.penup()
+        self.display.goto(0, 260)  # Adjust position as needed
+        self.display.color("black")
+        self.display.write(f"Time: {self.remaining}", align="center", font=("Arial", 16, "bold"))
+
+    def start(self):
+        self._countdown()
+
+    def _countdown(self):
+        self.display.clear()
+        self.display.write(f"Time: {self.remaining}", align="center", font=("Arial", 16, "bold"))
+        if self.remaining > 0:
+            self.remaining -= 1
+            turtle.ontimer(self._countdown, self.update_interval)
+        else:
+            if self.on_timeout:
+                self.on_timeout()
+
+====================================================================================================
+
+USING IT IN THE GAME
+
+import turtle
+from turtle_timer import TurtleTimer
+
+wn = turtle.Screen()
+wn.title("Turtle Game with Timer")
+wn.bgcolor("lightblue")
+
+# Callback when time is up
+def time_up():
+    print("⏰ Time's up!")
+    turtle.bye()  # close the window
+
+# Create a 30-second timer
+timer = TurtleTimer(duration=30, on_timeout=time_up)
+timer.start()
+
+# Example player turtle
+player = turtle.Turtle()
+player.shape("turtle")
+
+# Main game loop
+def move():
+    player.forward(10)
+
+wn.listen()
+wn.onkeypress(move, "Up")
+
+wn.mainloop()
+
+
+
+
+
+How it works:
+
+The TurtleTimer class uses turtle.ontimer() to update every second asynchronously.
+
+It displays remaining time on-screen.
+
+When the time hits zero, it calls your on_timeout() callback (you can end the game, show “Game Over”, etc.).
+
+
+
+============================================================================================
+===================================
+
+
+TIMER COUNTS UP INSTEAD OF DOWN
+_______________________________
+
+import turtle
+
+class TurtleStopwatch:
+    def __init__(self, update_interval=1000):
+        """
+        A stopwatch for turtle-based games that counts up in seconds.
+
+        Args:
+            update_interval (int): how often to update display in ms (default 1000 ms = 1 second)
+        """
+        self.elapsed = 0
+        self.update_interval = update_interval
+        self.running = False
+
+        # Create a hidden turtle for displaying time
+        self.display = turtle.Turtle()
+        self.display.hideturtle()
+        self.display.penup()
+        self.display.goto(0, 260)  # adjust position to fit your game
+        self.display.color("black")
+        self.display.write("Time: 0", align="center", font=("Arial", 16, "bold"))
+
+    def start(self):
+        """Start or resume the stopwatch."""
+        if not self.running:
+            self.running = True
+            self._update()
+
+    def stop(self):
+        """Pause the stopwatch."""
+        self.running = False
+
+    def reset(self):
+        """Reset stopwatch to 0 seconds."""
+        self.elapsed = 0
+        self.display.clear()
+        self.display.write(f"Time: {self.elapsed}", align="center", font=("Arial", 16, "bold"))
+
+    def _update(self):
+        if self.running:
+            self.elapsed += 1
+            self.display.clear()
+            self.display.write(f"Time: {self.elapsed}", align="center", font=("Arial", 16, "bold"))
+            turtle.ontimer(self._update, self.update_interval)
+
+
+USING IT IN THE GAME
+
+import turtle
+from turtle_timer_up import TurtleStopwatch
+
+wn = turtle.Screen()
+wn.title("Turtle Stopwatch Example")
+wn.bgcolor("lightgreen")
+
+# Create and start stopwatch
+timer = TurtleStopwatch()
+timer.start()
+
+# Example player turtle
+player = turtle.Turtle()
+player.shape("turtle")
+
+# Move player
+def move():
+    player.forward(10)
+
+wn.listen()
+wn.onkeypress(move, "Up")
+
+# Optionally stop or reset the timer
+# timer.stop()
+# timer.reset()
+
+wn.mainloop()
+
+
+
+
+Features:
+
+Counts up every second until stopped.
+
+Uses non-blocking updates (so your game continues running smoothly).
+
+You can pause, reset, or resume easily.
+
+Displays time in seconds on-screen (you can adjust formatting to show minutes:seconds if you like).
+
+
+
+MINUTES AND SECONDS
+
+
+import turtle
+
+class TurtleStopwatch:
+    def __init__(self, update_interval=1000):
+        """
+        A stopwatch for turtle-based games that counts up in minutes:seconds format.
+
+        Args:
+            update_interval (int): how often to update display in ms (default 1000 ms = 1 second)
+        """
+        self.elapsed = 0
+        self.update_interval = update_interval
+        self.running = False
+
+        # Create a hidden turtle for displaying time
+        self.display = turtle.Turtle()
+        self.display.hideturtle()
+        self.display.penup()
+        self.display.goto(0, 260)  # adjust position for your layout
+        self.display.color("black")
+        self.display.write("Time: 00:00", align="center", font=("Arial", 16, "bold"))
+
+    def start(self):
+        """Start or resume the stopwatch."""
+        if not self.running:
+            self.running = True
+            self._update()
+
+    def stop(self):
+        """Pause the stopwatch."""
+        self.running = False
+
+    def reset(self):
+        """Reset stopwatch to 0."""
+        self.elapsed = 0
+        self._show_time()
+
+    def _format_time(self):
+        minutes = self.elapsed // 60
+        seconds = self.elapsed % 60
+        return f"{minutes:02}:{seconds:02}"
+
+    def _show_time(self):
+        self.display.clear()
+        self.display.write(f"Time: {self._format_time()}", align="center", font=("Arial", 16, "bold"))
+
+    def _update(self):
+        if self.running:
+            self.elapsed += 1
+            self._show_time()
+            turtle.ontimer(self._update, self.update_interval)
+
+
+USAGE EXAMPLE
+
+
+
+import turtle
+from turtle_timer_up import TurtleStopwatch
+
+wn = turtle.Screen()
+wn.title("Turtle Stopwatch Example")
+wn.bgcolor("lightblue")
+
+# Create stopwatch
+timer = TurtleStopwatch()
+timer.start()
+
+# Example player turtle
+player = turtle.Turtle()
+player.shape("turtle")
+
+def move():
+    player.forward(10)
+
+wn.listen()
+wn.onkeypress(move, "Up")
+
+wn.mainloop()
+
+
+
+AUTO STOP 
+
+
+import turtle
+
+class TurtleStopwatch:
+    def __init__(self, update_interval=1000, max_time=None, on_timeout=None):
+        """
+        A stopwatch for turtle-based games that counts up in minutes:seconds format.
+
+        Args:
+            update_interval (int): how often to update display in ms (default 1000 ms = 1 second)
+            max_time (int): optional limit in seconds — stops automatically when reached
+            on_timeout (function): optional callback when max_time is reached
+        """
+        self.elapsed = 0
+        self.update_interval = update_interval
+        self.max_time = max_time
+        self.on_timeout = on_timeout
+        self.running = False
+
+        # Create a hidden turtle for displaying time
+        self.display = turtle.Turtle()
+        self.display.hideturtle()
+        self.display.penup()
+        self.display.goto(0, 260)  # adjust position to fit your game
+        self.display.color("black")
+        self.display.write("Time: 00:00", align="center", font=("Arial", 16, "bold"))
+
+    def start(self):
+        """Start or resume the stopwatch."""
+        if not self.running:
+            self.running = True
+            self._update()
+
+    def stop(self):
+        """Pause the stopwatch."""
+        self.running = False
+
+    def reset(self):
+        """Reset stopwatch to 0 seconds."""
+        self.elapsed = 0
+        self._show_time()
+
+    def _format_time(self):
+        minutes = self.elapsed // 60
+        seconds = self.elapsed % 60
+        return f"{minutes:02}:{seconds:02}"
+
+    def _show_time(self):
+        self.display.clear()
+        self.display.write(f"Time: {self._format_time()}", align="center", font=("Arial", 16, "bold"))
+
+    def _update(self):
+        if self.running:
+            self.elapsed += 1
+            self._show_time()
+
+            # Check for max_time limit
+            if self.max_time and self.elapsed >= self.max_time:
+                self.running = False
+                if self.on_timeout:
+                    self.on_timeout()
+                return
+
+            turtle.ontimer(self._update, self.update_interval)
+
+
+
+
+
+USAGE
+
+
+
+import turtle
+from turtle_timer_up import TurtleStopwatch
+
+wn = turtle.Screen()
+wn.title("Turtle Stopwatch Example")
+wn.bgcolor("lightgreen")
+
+# Callback when time limit reached
+def time_up():
+    print("⏰ Time's up!")
+    turtle.bye()  # close window or trigger Game Over screen
+
+# Create stopwatch with a 5-minute limit (300 seconds)
+timer = TurtleStopwatch(max_time=300, on_timeout=time_up)
+timer.start()
+
+# Example turtle
+player = turtle.Turtle()
+player.shape("turtle")
+
+def move():
+    player.forward(10)
+
+wn.listen()
+wn.onkeypress(move, "Up")
+
+wn.mainloop()
+

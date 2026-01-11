@@ -1,0 +1,35 @@
+         Setting Up a Localhost with Python HTTP Server
+
+Navigate to Your Project Folder:
+Open Terminal.
+Use the cd command to navigate to the folder where your website or project files are stored.
+
+        cd /Users/joehood/Desktop/Desktop Folders/TableViewer
+
+*****Note:  use a \ to escape the space.  cd /Users/joehood/Desktop/Desktop\ Folders/TableViewer
+
+
+
+              Start the Server (Python 3.x):
+
+If you are using Python 3, use the following command to start the local server:
+
+        python3 -m http.server 8000
+
+This will start a server on port 8000, which is commonly used for local development.
+
+
+
+                Access the Local Server:
+
+Open your web browser and go to:
+
+        http://localhost:8000/
+
+
+You should now see your files being served locally! You can click on your HTML files, and they will render right in your browser.
+
+
+
+                  Stopping the Server:
+To stop the server, simply go back to your Terminal and press Ctrl + C.

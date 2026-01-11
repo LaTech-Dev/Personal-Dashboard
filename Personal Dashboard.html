@@ -1,0 +1,177 @@
+<!-- at the moment table entries need to be updated in the HTML -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Dashboard</title>
+    <style>
+            .center-table {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        
+            body {
+                background-color: #f0f0f0;
+                  
+            }
+
+
+            body {
+                 background-image: url('Texas.jpeg');
+                 background-repeat: no-repeat; /* Prevents image from tiling */
+                 background-size: 10% 20%;
+               /*  background-size: cover;  Ensures image covers the entire area */
+                /* background-position: right; Centers the image */ 
+               /*  background-position: 95% 85%;*/ /* 25% from left, 75% from top */
+            }
+       
+            .header-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center; /* centers the whole row */
+                gap: 20px; /* space between elements */
+                margin-top: 50px;
+            }
+
+               .header-wrapper img {
+               width: 100px;
+               height: 100px;
+            }
+
+              .header-wrapper h1 {
+              margin: 0;
+              font-size: 2rem;
+            }    
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 40px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #FFFACD;
+        }
+
+        th {
+            color: blue;
+            text-decoration: underline;
+        }
+
+	h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+	h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- build top line with two pictures and a title. -->
+
+    <div class="header-wrapper">
+    <img src='all.six.jpeg' alt="Left Image">
+    <h1>Dashboard<br>Joe Hood</h1>
+    <img src='Disneyland.jpeg' alt="Right Image">
+  </div>
+
+<!-- Give address of this WEB as there are several versions being worked -->
+<br>
+<p id="demoAAA"></p>
+<script>
+document.getElementById("demoAAA").innerHTML ="Page path is: " + window.location.pathname;
+
+
+</script>
+<div style="text-align:center;"><br>
+<a href='thisweekplan.html' style="margin-right: 15px;">
+THIS WEEK'S PLAN </a>
+
+<a href='nextweekplan.html' style="margin-right: 15px;">
+NEXT WEEK'S PLAN </a>
+</div>
+
+ 
+<style>
+  /* Reset the default hr style */
+hr {
+  border: none;
+}
+
+.hr-background-one {
+  height: 3px;
+  background: linear-gradient(to right, green, yellow, blue);
+  background-color: steelblue;
+  width: 100%;
+  border-style: dashed;
+    height: 1px;
+    width: 80%;
+  margin: 5px 0; /* 5px top/bottom margin, 0px left/right */
+}
+
+.hr-background-two {
+  height: 5px;
+  background: linear-gradient(to right, red, orange, yellow);
+  width: 100%;
+  border-style: dotted;
+    height: 1px;
+    width: 80%;
+    margin: 3px 0; /* 3px top/bottom margin, 0px left/right */
+}
+  }
+</style>
+
+<hr class="hr-background-one">
+</div>
+<!-- gets a blank Google Calendar that lets you get to the calendar on your computer. -->
+<!-- This Calendar cannot be updated with meetings ,etc. -->
+<div style="text-align:center;">
+<div class="calendar-container">
+  <iframe src="https://calendar.google.com/calendar/embed?src=your_calendar_id&ctz=America FNew_York"
+          style="border: 0" width="600" height="200" frameborder="0" scrolling="no">
+  </iframe>
+</div>
+
+<!--  branch to other pages -->
+<!--  groups and centers them. -->
+<!--  icons just don't seem appropriate  -->
+
+<hr class="hr-background-one"><br>
+
+
+
+<hr class="hr-background-two">
+
+<div style="text-align:center;"><br>
+<a href='period times.png' style="margin-right: 15px;">
+School Schedule</a>
+<a href='SBISD Calendar.jpeg' style="margin-right: 15px;">SBISD Calendar</a>
+<a href='Next SBISD Calendar.jpeg' style="margin-right: 15px;">Next SBISD Calendar</a>
+<a href="https://www.springbranchisd.com/" style="margin-right: 15px;">SBISD.com</a>
+<a href='Server setup procedure.txt' style="margin-right: 15px;">Server Setup</a>
+<a href='https://www.foxnews.com' style="margin-right: 15px;">News Page</a>
+<a href='Computer Science Tasks.html' style="margin-right: 15px;">Computer Science Tasks</a>
+<a href='Personal Tasks.html' style="margin-right: 15px;">Other Course Tasks</a>
+</div>
+
+<hr class="hr-background-two">
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
