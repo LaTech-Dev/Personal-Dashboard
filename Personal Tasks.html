@@ -60,15 +60,15 @@ RETURN </a>
 
   <div id="inputWrapper">
     <input type="text" id="task" placeholder="Enter Task">
-    <input type="due" id="due" placeholder="Enter Due Date">
+    <input type="date" id="due" placeholder="Enter Due Date">
     <button onclick="addRow()">Add Row</button>
   </div>
 
   <table>
     <thead>
       <tr>
-        <th>Task</th>
         <th>Due Date</th>
+        <th>Task</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -81,45 +81,59 @@ RETURN </a>
   </div>
 
   <script>
-    window.onload = function () {
-      const savedData = JSON.parse(localStorage.getItem('tableData1')) || [];
-      savedData.forEach(entry => {
-        addRowToTable(entry.task, entry.due);
-      });
-    };
+     window.onload = function () {
+     renderTable();
+};
+
+   function renderTable() {
+     const tableBody = document.getElementById('tableBody1');
+     tableBody.innerHTML = '';
+     
+     const data = JSON.parse(localStorage.getItem('tableData1')) || [];
+
+   data
+     .sort((a, b) => a.due.localeCompare(b.due))
+     .forEach(entry => {
+      addRowToTable(entry.task, entry.due);
+    });
+}
+
+
 
     function addRow() {
-      const taskInput = document.getElementById('task');
-      const dueInput = document.getElementById('due');
-      const task = taskInput.value.trim();
-      const due = dueInput.value.trim();
+  const taskInput = document.getElementById('task');
+  const dueInput = document.getElementById('due');
 
-      if (!task || !due) {
-        alert('Please fill in both fields.');
-        return;
-      }
+  const due = dueInput.value.trim();
+  const task = taskInput.value.trim();
 
-      saveToLocalStorage(task, due);
-      addRowToTable(task, due);
+  if (!task || !due) return;
 
-      taskInput.value = '';
-      dueInput.value = '';
-    }
+  const data = JSON.parse(localStorage.getItem('tableData1')) || [];
+  data.push({ task, due });
+  localStorage.setItem('tableData1', JSON.stringify(data));
+
+  taskInput.value = '';
+  dueInput.value = '';
+
+  renderTable();
+}
+
 
     function addRowToTable(task, due) {
-      const tableBody1 = document.getElementById('tableBody1');
-      const newRow = document.createElement('tr');
+        const tableBody1 = document.getElementById('tableBody1');
+        const newRow = document.createElement('tr');
 
-      newRow.innerHTML = `
-        <td>${escapeHtml(task)}</td>
-        <td>${escapeHtml(due)}</td>
-        <td><button onclick="removeRow(this)">Finished</button></td>
-      `;
+        newRow.innerHTML = `
+          <td>${escapeHtml(due)}</td>
+          <td>${escapeHtml(task)}</td>
+          <td><button onclick="removeRow(this)">Finished</button></td>
+          `;
 
-      newRow.dataset.task = task;
-      newRow.dataset.due = due;
+         newRow.dataset.due = due;
+         newRow.dataset.task = task;
 
-      tableBody1.appendChild(newRow);
+         tableBody1.appendChild(newRow);
     }
 
     function saveToLocalStorage(task, due) {
@@ -129,16 +143,16 @@ RETURN </a>
     }
 
     function removeRow(button) {
-      const row = button.closest('tr');
-      const task = row.dataset.task;
-      const due = row.dataset.due;
+  const row = button.closest('tr');
+  const task = row.dataset.task;
+  const due = row.dataset.due;
 
-      row.remove();
+  let data = JSON.parse(localStorage.getItem('tableData1')) || [];
+  data = data.filter(entry => !(entry.task === task && entry.due === due));
+  localStorage.setItem('tableData1', JSON.stringify(data));
 
-      let data = JSON.parse(localStorage.getItem('tableData1')) || [];
-      data = data.filter(entry => !(entry.task === task && entry.due === due));
-      localStorage.setItem('tableData1', JSON.stringify(data));
-    }
+  renderTable();
+}
 
     function clearAll() {
       if (confirm("Are you sure you want to clear all tasks?")) {
