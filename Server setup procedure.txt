@@ -4,7 +4,7 @@ Navigate to Your Project Folder:
 Open Terminal.
 Use the cd command to navigate to the folder where your website or project files are stored.
 
-        cd /Users/joehood/Desktop/Desktop Folders/TableViewer
+        cd /Users/your user name/Desktop/Desktop Folders/TableViewer
 
 *****Note:  use a \ to escape the space.  cd /Users/joehood/Desktop/Desktop\ Folders/TableViewer
 
