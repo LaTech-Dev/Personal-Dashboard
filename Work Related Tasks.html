@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Personal Assignments</title>
+  <title>Work Task</title>
   <style>
     body {
       background-color: #f0f0f0;
@@ -51,11 +51,12 @@
 </head>
 <body>
 
-  <h2>Personal Track</h2>
+  <h2>Work Assignment Track</h2>
 <center>
 <a href='Personal Dashboard.html' style="margin-right: 15px;">
 RETURN </a>
-<a href='Work Related Tasks.html' style="margin-right: 15px;">WORK TASKS</a>
+<a href='Personal Tasks.html' style="margin-right: 15px;">
+ NON-CS TASKS</a>
 
 
   <div id="inputWrapper">
@@ -72,17 +73,16 @@ RETURN </a>
         <th>Action</th>
       </tr>
     </thead>
-    <tbody id="tableBody1"></tbody>
+    <tbody id="tableBody"></tbody>
   </table>
-
-  <div id="clearWrapper">
 <br><br><br><br>
+  <div id="clearWrapper">
     <button onclick="clearAll()">Clear All</button>
   </div>
 
   <script>
     window.onload = function () {
-      const savedData = JSON.parse(localStorage.getItem('tableData1')) || [];
+      const savedData = JSON.parse(localStorage.getItem('tableData')) || [];
       savedData.forEach(entry => {
         addRowToTable(entry.task, entry.due);
       });
@@ -107,7 +107,7 @@ RETURN </a>
     }
 
     function addRowToTable(task, due) {
-      const tableBody1 = document.getElementById('tableBody1');
+      const tableBody = document.getElementById('tableBody');
       const newRow = document.createElement('tr');
 
       newRow.innerHTML = `
@@ -119,13 +119,13 @@ RETURN </a>
       newRow.dataset.task = task;
       newRow.dataset.due = due;
 
-      tableBody1.appendChild(newRow);
+      tableBody.appendChild(newRow);
     }
 
     function saveToLocalStorage(task, due) {
-      const data = JSON.parse(localStorage.getItem('tableData1')) || [];
+      const data = JSON.parse(localStorage.getItem('tableData')) || [];
       data.push({ task, due });
-      localStorage.setItem('tableData1', JSON.stringify(data));
+      localStorage.setItem('tableData', JSON.stringify(data));
     }
 
     function removeRow(button) {
@@ -135,15 +135,15 @@ RETURN </a>
 
       row.remove();
 
-      let data = JSON.parse(localStorage.getItem('tableData1')) || [];
+      let data = JSON.parse(localStorage.getItem('tableData')) || [];
       data = data.filter(entry => !(entry.task === task && entry.due === due));
-      localStorage.setItem('tableData1', JSON.stringify(data));
+      localStorage.setItem('tableData', JSON.stringify(data));
     }
 
     function clearAll() {
       if (confirm("Are you sure you want to clear all tasks?")) {
-        localStorage.removeItem('tableData1');
-        document.getElementById('tableBody1').innerHTML = '';
+        localStorage.removeItem('tableData');
+        document.getElementById('tableBody').innerHTML = '';
       }
     }
 
