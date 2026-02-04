@@ -178,7 +178,7 @@ function finishTask(task, due) {
     finishedTasks.push({
       task: finishedTask.task,
       due: finishedTask.due,
-      finishedAt: new Date().toISOString()
+      finishedAt: new Date().toLocaleDateString('en-CA')
     });
   }
 
