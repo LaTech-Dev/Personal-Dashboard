@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Work Task</title>
+  <title>Work Tasks</title>
+
   <style>
     body {
       background-color: #f0f0f0;
@@ -27,7 +28,7 @@
 
     table {
       width: 80%;
-      margin: 0 auto;
+      margin: 20px auto;
       border-collapse: collapse;
       background-color: white;
     }
@@ -49,158 +50,220 @@
     }
   </style>
 </head>
+
 <body>
 
-  <h2>Work Related Tasks</h2>
-<center>
-<a href='Personal Dashboard.html' style="margin-right: 15px;">
-RETURN </a>
-<a href='Personal Tasks.html' style="margin-right: 15px;">NON-WORK TASKS</a>
+<h2>Work Tasks</h2>
 
+<div id="inputWrapper">
+  <input type="text" id="task" placeholder="Enter Task">
+  <input type="date" id="due">
+  <button onclick="addRow()">Add Task</button>
+</div>
 
-  <div id="inputWrapper">
-    <input type="text" id="task" placeholder="Enter Plan/Task">
-    <input type="date" id="due" placeholder="Enter Due Date">
-    <button onclick="addRow()">Add Row</button>
-  </div>
+<table>
+  <thead>
+    <tr>
+      <th>Due Date</th>
+      <th>Task</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Due Date</th>
-        <th>Task</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
+<div id="clearWrapper">
+  <button onclick="clearAll()">Clear Active Tasks</button>
+  <button onclick="window.location.replace('Export program.html')">Export</button>
+</div>
 
-<br><br><br><br>
-  <div id="clearWrapper">
-    <button onclick="clearAll()">Clear All</button>
-  </div>
+<hr>
 
-  <script>
-     window.onload = function () {
-     renderTable();
+<h2>Finished Tasks</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Finished On</th>
+      <th>Due Date</th>
+      <th>Task</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="finishedTableBody"></tbody>
+</table>
+
+<script>
+window.onload = function () {
+  renderTable();
+  renderFinishedTable();
 };
 
+/* ================= ACTIVE TASKS ================= */
+
 function renderTable() {
-  const tableBody = document.getElementById('tableBody');
+  var tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
 
-  const data = JSON.parse(localStorage.getItem('tableData')) || [];
+  var data = JSON.parse(localStorage.getItem('tableData')) || [];
+  var lastDate = null;
 
-  let lastDate = null;
+  data.sort(function (a, b) {
+    return a.due.localeCompare(b.due);
+  });
 
-  data
-    .sort((a, b) => a.due.localeCompare(b.due))
-    .forEach(entry => {
+  data.forEach(function (entry) {
 
-      // Insert date header if date changed
-      if (entry.due !== lastDate) {
-        const dateRow = document.createElement('tr');
-        dateRow.innerHTML = `
-          <td colspan="3" style="
-            background:#e8e8e8;
-            font-weight:bold;
-          ">
-            📅 ${formatDate(entry.due)}
-          </td>
-        `;
-        tableBody.appendChild(dateRow);
-        lastDate = entry.due;
-      }
+    if (entry.due !== lastDate) {
+      var dateRow = document.createElement('tr');
+      dateRow.innerHTML =
+        '<td colspan="3" style="background:#e8e8e8;font-weight:bold;">' +
+        formatDate(entry.due) +
+        '</td>';
+      tableBody.appendChild(dateRow);
+      lastDate = entry.due;
+    }
 
-      // Task row
-      const taskRow = document.createElement('tr');
-      taskRow.innerHTML = `
-        <td>${escapeHtml(entry.due)}</td>
-        <td>${escapeHtml(entry.task)}</td>
-        <td>
-          <button onclick="removeRowByValue('${escapeJs(entry.task)}','${entry.due}')">
-            Finished
-          </button>
-        </td>
-      `;
-      tableBody.appendChild(taskRow);
-    });
+    var taskRow = document.createElement('tr');
+    taskRow.innerHTML =
+      '<td>' + escapeHtml(entry.due) + '</td>' +
+      '<td>' + escapeHtml(entry.task) + '</td>' +
+      '<td>' +
+      '<button onclick="finishTask(\'' +
+      escapeJs(entry.task) + '\',\'' +
+      entry.due + '\')">Finished</button>' +
+      '</td>';
+
+    tableBody.appendChild(taskRow);
+  });
 }
 
-
-
-
-    function addRow() {
-  const taskInput = document.getElementById('task');
-  const dueInput = document.getElementById('due');
-
-  const due = dueInput.value.trim();
-  const task = taskInput.value.trim();
+function addRow() {
+  var task = document.getElementById('task').value.trim();
+  var due = document.getElementById('due').value.trim();
 
   if (!task || !due) return;
 
-  const data = JSON.parse(localStorage.getItem('tableData')) || [];
-  data.push({ task, due });
+  var data = JSON.parse(localStorage.getItem('tableData')) || [];
+  data.push({ task: task, due: due });
+
   localStorage.setItem('tableData', JSON.stringify(data));
 
-  taskInput.value = '';
-  dueInput.value = '';
+  document.getElementById('task').value = '';
+  document.getElementById('due').value = '';
 
   renderTable();
 }
 
+function finishTask(task, due) {
+  var activeTasks = JSON.parse(localStorage.getItem('tableData')) || [];
+  var finishedTasks = JSON.parse(localStorage.getItem('finishedTasks1')) || [];
 
-    function addRowToTable(task, due) {
-        const tableBody = document.getElementById('tableBody');
-        const newRow = document.createElement('tr');
+  var remaining = [];
+  var finishedTask = null;
 
-        newRow.innerHTML = `
-          <td>${escapeHtml(due)}</td>
-          <td>${escapeHtml(task)}</td>
-          <td><button onclick="removeRow(this)">Finished</button></td>
-          `;
-
-         newRow.dataset.due = due;
-         newRow.dataset.task = task;
-
-         tableBody.appendChild(newRow);
+  for (var i = 0; i < activeTasks.length; i++) {
+    if (activeTasks[i].task === task && activeTasks[i].due === due) {
+      finishedTask = activeTasks[i];
+    } else {
+      remaining.push(activeTasks[i]);
     }
+  }
 
-    function saveToLocalStorage(task, due) {
-      const data = JSON.parse(localStorage.getItem('tableData')) || [];
-      data.push({ task, due });
-      localStorage.setItem('tableData', JSON.stringify(data));
-    }
+  if (finishedTask) {
+    finishedTasks.push({
+      task: finishedTask.task,
+      due: finishedTask.due,
+      finishedAt: new Date().toISOString()
+    });
+  }
 
-     function removeRowByValue(task, due) {
-       let data = JSON.parse(localStorage.getItem('tableData')) || [];
-       data = data.filter(e => !(e.task === task && e.due === due));
-       localStorage.setItem('tableData', JSON.stringify(data));
-       renderTable();
+  localStorage.setItem('tableData', JSON.stringify(remaining));
+  localStorage.setItem('finishedTasks1', JSON.stringify(finishedTasks));
+
+  renderTable();
+  renderFinishedTable();
+}
+
+function clearAll() {
+  if (confirm("Are you sure you want to clear active tasks?")) {
+    localStorage.removeItem('tableData');
+    renderTable();
+  }
+}
+
+/* ================= FINISHED TASKS ================= */
+
+function renderFinishedTable() {
+  var tableBody = document.getElementById('finishedTableBody');
+  tableBody.innerHTML = '';
+
+  var finishedTasks = JSON.parse(localStorage.getItem('finishedTasks1')) || [];
+
+  finishedTasks.forEach(function (task, index) {
+    var row = document.createElement('tr');
+    row.innerHTML =
+      '<td>' + formatDate(task.finishedAt.split("T")[0]) + '</td>' +
+      '<td>' + escapeHtml(task.due) + '</td>' +
+      '<td>' + escapeHtml(task.task) + '</td>' +
+      '<td>' +
+        '<button onclick="restoreTask(' + index + ')">Restore</button> ' +
+        '<button onclick="deleteFinishedTask(' + index + ')">Delete</button>' +
+      '</td>';
+
+    tableBody.appendChild(row);
+  });
+}
+
+function deleteFinishedTask(index) {
+  if (!confirm("Delete this finished task permanently?")) return;
+
+  var finishedTasks = JSON.parse(localStorage.getItem('finishedTasks1')) || [];
+  finishedTasks.splice(index, 1);
+
+  localStorage.setItem(
+    'finishedTasks1',
+    JSON.stringify(finishedTasks)
+  );
+
+  renderFinishedTable();
 }
 
 
-    function clearAll() {
-      if (confirm("Are you sure you want to clear all tasks?")) {
-        localStorage.removeItem('tableData');
-        document.getElementById('tableBody').innerHTML = '';
-      }
-    }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
+function restoreTask(index) {
+  var finishedTasks = JSON.parse(localStorage.getItem('finishedTasks1')) || [];
+  var activeTasks = JSON.parse(localStorage.getItem('tableData')) || [];
 
-    function formatDate(iso) {
-      return new Date(iso + "T00:00:00").toLocaleDateString();
+  var task = finishedTasks.splice(index, 1)[0];
+
+  if (task) {
+    activeTasks.push({ task: task.task, due: task.due });
+  }
+
+  localStorage.setItem('tableData', JSON.stringify(activeTasks));
+  localStorage.setItem('finishedTasks1', JSON.stringify(finishedTasks));
+
+  renderTable();
+  renderFinishedTable();
+}
+
+/* ================= UTILITIES ================= */
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function escapeJs(text) {
-  return text.replace(/'/g, "\\'");
+  return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 
-  </script>
+function formatDate(iso) {
+  return new Date(iso + "T00:00:00").toLocaleDateString();
+}
+</script>
+
 </body>
 </html>
